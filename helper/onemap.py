@@ -490,7 +490,7 @@ class OneMapQuery:
 if __name__ == "__main__":
     om = OneMapQuery()
     om.get_onemap_token()
-    om.get_postal_latlong(641183)
+    om.get_postal_latlong(338729)
     om.get_address_by_postal(641183)
     m = folium.Map(location=[1.352083, 103.819839], zoom_start=12, tiles="cartodbpositron")
     start = (1.319728, 103.8421)

@@ -3,6 +3,7 @@ import folium
 from domain.travelling_salesman.entities.location import Location
 from domain.travelling_salesman.value_objects.coordinates import Coordinates
 from helper.onemap import OneMapQuery
+import numpy as np
 
 class OneMapService:
     def __init__(self):
@@ -49,3 +50,13 @@ class OneMapService:
         
         # Save map to HTML
         map_obj.save(output_file) 
+    
+    def get_route_matrices(self, locations: List[tuple[float, float]]) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Get duration and distance matrices for a list of locations
+        Args:
+            locations: List of (latitude, longitude) tuples
+        Returns:
+            Tuple of (duration_matrix, distance_matrix)
+        """
+        return self._onemap_query.get_route_matrices(locations)

@@ -1,41 +1,41 @@
-from typing import List, Optional, Literal
+from typing import List, Optional
 from domain.travelling_salesman.entities.location import Location
-from application.travelling_salesman.use_cases.load_locations_use_case import LoadLocationsUseCase
-from application.travelling_salesman.use_cases.get_optimal_routes_use_case import GetOptimalRoutesUseCase
-from application.travelling_salesman.interfaces.route_optimizer_interface import OptimizedRoute
 from domain.travelling_salesman.entities.route import Route
+from application.travelling_salesman.use_cases.get_optimal_routes_use_case import GetOptimalRoutesUseCase
 
 
 class RoutePlanningService:
-    def __init__(
-        self,
-        load_locations_use_case: LoadLocationsUseCase,
-        get_optimal_routes_use_case: GetOptimalRoutesUseCase
-    ):
+    def __init__(self, load_locations_use_case, get_optimal_routes_use_case: GetOptimalRoutesUseCase):
         self._load_locations_use_case = load_locations_use_case
         self._get_optimal_routes_use_case = get_optimal_routes_use_case
     
     def plan_routes(
         self,
-        max_vehicles: Optional[int] = None,
-        matrix_type: Literal["duration", "distance"] = "duration"
-    ) -> List[Route]:
+        max_vehicles: int,
+        matrix_type: str,
+        depot_location: Optional[Location] = None
+    ) -> (List[Route], List[Location]):
         """
-        Plan optimal routes for delivery locations
+        Plan routes for the traveling salesman problem
         Args:
             max_vehicles: Maximum number of vehicles to use
-            matrix_type: Type of matrix to use for optimization ("duration" or "distance")
+            matrix_type: Type of matrix to use for optimization
+            depot_location: Optional depot location
         Returns:
-            List of optimized routes
+            Tuple of (optimized_routes, unassigned_locations)
         """
-        # Load locations from repository
+        # Load locations
         locations = self._load_locations_use_case.execute()
         
         # Get optimal routes
-        routes = self._get_optimal_routes_use_case.execute(
+        optimized_routes = self._get_optimal_routes_use_case.execute(
             locations=locations,
             max_vehicles=max_vehicles,
             matrix_type=matrix_type
         )
         
-        return routes 
+        # Determine unassigned locations
+        assigned_location_ids = {loc.id for route in optimized_routes for loc in route.locations}
+        unassigned_locations = [loc for loc in locations if loc.id not in assigned_location_ids]
+        
+        return optimized_routes, unassigned_locations 

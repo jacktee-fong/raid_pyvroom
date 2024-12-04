@@ -4,7 +4,7 @@ import re
 from domain.travelling_salesman.entities.location import Location
 from domain.travelling_salesman.repositories.location_repository_interface import LocationRepositoryInterface
 from domain.travelling_salesman.value_objects.address import Address
-from infrastructure.travelling_salesman.services.onemap_service import OneMapService
+from infrastructure.onemap_service import OneMapService
 
 
 class ExcelLocationRepository(LocationRepositoryInterface):
